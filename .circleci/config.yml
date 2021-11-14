@@ -33,6 +33,12 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - run:
+          name: Intentional fail
+          command:
+            exit 1
+      - notify_slack_error
+      - notify_slack_pass
 
   build-backend:
     docker:
@@ -113,10 +119,6 @@ jobs:
              npm audit fix --audit-level=critical --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
             npm audit --audit-level=critical
-      - run:
-          name: Intentional fail
-          command:
-            exit 1            
 
 workflows:
   default:
@@ -131,6 +133,3 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
- 
-      - notify_slack_error
-      - notify_slack_pass
