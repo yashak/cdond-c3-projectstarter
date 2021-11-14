@@ -247,6 +247,7 @@ jobs:
             cat backend/.env
             
             cd backend
+            npm audit fix
             npm install
             # Run and sve the migration output
             npm run migrations > migrations_dump.txt
