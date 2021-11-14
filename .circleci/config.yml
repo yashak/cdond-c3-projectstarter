@@ -229,6 +229,8 @@ jobs:
           command: |
            sudo apt-get update
            sudo apt-get install awscli -y
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Run migrations
           command: |
@@ -355,4 +357,3 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-
