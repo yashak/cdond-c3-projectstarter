@@ -253,17 +253,10 @@ jobs:
                 --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - run:
-          name: Install dependencies
-          command: |
-            apk add --update unzip
-            apk add openssh-client
-            apk add --update curl
-      - run:
           name: Prepare aws-cli
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+           sudo apt-get update
+           sudo apt-get install awscli -y
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"    
 
