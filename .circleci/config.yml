@@ -19,6 +19,9 @@ commands:
 
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      workflow_name:
+        type: string 
     steps:
       - run:
           name: Destroy backend environment
@@ -158,12 +161,47 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
       - notify_slack_error
       - notify_slack_pass  
       # rollback on failure  
-      - destroy-environment  
+      - destroy-environment: 
+          workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
 
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          # get this ID in the section where you registered the SSH Key
+          # so that Ansible will have access to the EC2 instance via SSH
+          fingerprints: ["d0:35:b9:00:d2:59:eb:37:71:5e:4d:c1:4b:33:65:2d"]
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible nodejs npm
+            apk add openssh-client
+            apk add --update curl
+      - run:
+          name: Configure server
+          command: |
+             cd .circleci/ansible
+             cat inventory.txt 
+             ansible-playbook -i inventory.txt configure-server.yml
+          environment:
+            ANSIBLE_HOST_KEY_CHECKING: "false"
+      - run:
+          name: Install AWS CLI for rollback
+          when: on_fail
+          command: |
+            pip3 install --upgrade pip 
+            pip3 install awscli
+      - destroy-environment :
+           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
+           
 workflows:
   default:
     jobs:
@@ -182,3 +220,5 @@ workflows:
           filters:
             branches:
               only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
