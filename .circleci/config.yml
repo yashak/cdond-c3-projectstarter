@@ -30,25 +30,26 @@ commands:
             echo "Destroying frontend environment: ${CIRCLE_WORKFLOW_ID:0:7} "
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
         
-    revert-migrations:
-      description: Revert the last migration if successfully run in the current workflow.
-      parameters:
-        workflow_id:
-          type: string      
-      steps:
-        - run:
-            name: Revert migrations
-            when: on_fail
-            command: |
-              # Your Memstash GET URL code goes here
-              # See an example below
-              SUCCESS=$(curl -H "token: fd18783b-ffc4-482c-814c-891938f888d2" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
-              if (( $SUCCESS == 1 ));
-              then
-                cd ~/project/backend
-                npm install
-                npm run migration:revert
-              fi  
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflow_id:
+        type: string      
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            # Your Memstash GET URL code goes here
+            # See an example below
+            SUCCESS=$(curl -H "token: fd18783b-ffc4-482c-814c-891938f888d2" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            if (( $SUCCESS == 1 ));
+            then
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
+            fi  
+
 jobs:
   build-frontend:
     docker:
