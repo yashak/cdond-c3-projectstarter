@@ -48,8 +48,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - notify_slack_error
-      - notify_slack_pass
 
   build-backend:
     docker:
@@ -155,16 +153,15 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances \
-              --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}  \ 
-              --query Reservations[*].Instances[*].[PublicIpAddress] \
-              --output text >> .circleci/ansible/inventory.txt
-            
+            aws ec2 describe-instances --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} --query Reservations[*].Instances[*].[PublicIpAddress] --output text >> .circleci/ansible/inventory.txt
+          
       - persist_to_workspace:
           root: ~/
           paths:
             - .circleci/ansible/inventory.txt
-      # rollback on failure    
+      - notify_slack_error
+      - notify_slack_pass  
+      # rollback on failure  
       - destroy-environment  
 
 workflows:
