@@ -225,6 +225,11 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
+          name: Prepare aws-cli
+          command: |
+           sudo apt-get update
+           sudo apt-get install awscli -y
+      - run:
           name: Run migrations
           command: |
             echo NODE_ENV=production >> backend/.env
@@ -239,6 +244,7 @@ jobs:
             echo TYPEORM_DATABASE=${TYPEORM_DATABASE} >> backend/.env
             cat backend/.env
             
+            cd backend
             npm install
             # Run and sve the migration output
             npm run migrations > migrations_dump.txt
@@ -252,11 +258,6 @@ jobs:
                 -H "token: fd18783b-ffc4-482c-814c-891938f888d2" \
                 --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
-      - run:
-          name: Prepare aws-cli
-          command: |
-           sudo apt-get update
-           sudo apt-get install awscli -y
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"    
 
