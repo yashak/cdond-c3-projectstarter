@@ -1,5 +1,21 @@
 version: 2.1
-          
+
+orbs:
+  slack: circleci/slack@4.5.0
+
+commands:
+  notify_slack_error:
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  notify_slack_pass:
+    steps:
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
 jobs:
   build-frontend:
     docker:
@@ -97,6 +113,10 @@ jobs:
              npm audit fix --audit-level=critical --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
             npm audit --audit-level=critical
+      - run:
+          name: Intentional fail
+          command:
+            exit 1            
 
 workflows:
   default:
@@ -112,3 +132,5 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
  
+      - notify_slack_error
+      - notify_slack_pass
