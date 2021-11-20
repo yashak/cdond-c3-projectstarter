@@ -227,7 +227,6 @@ jobs:
           command: |
            sudo apt-get update
            sudo apt-get install awscli -y
-           sudo apt install python-pip
       - restore_cache:
           keys: [backend-build]
       - run:
