@@ -189,9 +189,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          # get this ID in the section where you registered the SSH Key
-          # so that Ansible will have access to the EC2 instance via SSH
-          fingerprints: ["d0:35:b9:00:d2:59:eb:37:71:5e:4d:c1:4b:33:65:2d"]
+          fingerprints: ["be:b5:94:98:f3:f9:1d:d9:9c:e7:1d:54:71:7d:bf:ff"]
       - attach_workspace:
           at: ./
       - run:
