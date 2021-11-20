@@ -220,20 +220,11 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Prepare aws-cli
-          command: |
-           sudo apt-get update
-           sudo apt-get install awscli -y
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Run migrations
           command: |
             cd backend
-            npm install
+            sudo npm install
             # Run and save the migration output
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
