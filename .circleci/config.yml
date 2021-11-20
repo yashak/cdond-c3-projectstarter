@@ -232,9 +232,6 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run: 
-          name: install aws cli for rollback
-          command: pip3 install awscli
       - run:
           name: Configure .env
           no_output_timeout: 30m
