@@ -232,17 +232,36 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - run: 
+          name: install aws cli for rollback
+          command: pip3 install awscli
+      - run:
+          name: Configure .env
+          no_output_timeout: 30m
+          command: |
+            echo ENVIROMENT=production > "backend/.env"
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            cat "backend/.env"
+      - run: 
+          name: npm install
+          command: |
+            cd backend
+            sudo npm install
       - run:
           name: Run migrations
           no_output_timeout: 30m
           command: |
-            cd backend
-            sudo npm install
             # Run and save the migration output
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-         
-
       - run:
           name: Send migration results to memstash
           command: |
