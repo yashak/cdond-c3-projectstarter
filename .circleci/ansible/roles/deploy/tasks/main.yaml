@@ -3,12 +3,15 @@
   become: true
   unarchive:
     src: /root/project/backend.tar.gz
-    dest: /home/ubuntu/app
+    dest: /home/ubuntu/
+    owner: ubuntu
     
 - name: Install
   become: true
-  shell: |
-    cd /home/ubuntu/app/backend
+  shell: 
+    cd /home/ubuntu/backend
     npm install
+    npm run build
     pm2 stop default
     pm2 start npm -- start
+    pm2 save 
