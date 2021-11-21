@@ -12,6 +12,12 @@
     creates: /home/ubuntu/backend/dist/main.js
     owner: ubuntu
 
+- name: "copy backend .env file"
+  become: true
+  copy:
+    src: ~/project/backend/.env
+    dest: ~/backend/.env
+
 - name: Install
   become: true
   shell: 
@@ -21,6 +27,8 @@
 
 - name: "Start backend with pm2"
   shell: |
+    echo "Contents of the .env file (ansible task):"
+    cat "~/project/backend/.env"
     #pm2 start /home/ubuntu/backend/dist/main.js
     #pm2 start npm --name backend -- start
     cd /home/ubuntu/backend
