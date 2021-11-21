@@ -450,7 +450,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
 
-env-save:
+  env-save:
     docker:
       - image: python:3.7-alpine3.11
     steps:
@@ -471,7 +471,7 @@ env-save:
           paths: 
             - project/backend/.env
 
-env-read:
+  env-read:
     docker:
       - image: python:3.7-alpine3.11
     steps:
