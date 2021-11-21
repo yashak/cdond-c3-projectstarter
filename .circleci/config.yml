@@ -184,7 +184,7 @@ jobs:
             echo $BACKEND_IP
             echo $BACKEND_IP >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - project/.circleci/ansible/inventory.txt
       - notify_slack_error
@@ -199,7 +199,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["be:b5:94:98:f3:f9:1d:d9:9c:e7:1d:54:71:7d:bf:ff"]
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -228,9 +228,9 @@ jobs:
           environment:
             ANSIBLE_HOST_KEY_CHECKING: "false"
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths: 
-            - project/backend/.env
+            - project/backend/
       - run:
           name: Install AWS CLI for rollback
           when: on_fail
@@ -246,7 +246,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Get .env file
           command: |
@@ -290,7 +290,7 @@ jobs:
             pip3 install --upgrade pip
             pip3 install awscli
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Set .env
           command: |
@@ -335,7 +335,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["be:b5:94:98:f3:f9:1d:d9:9c:e7:1d:54:71:7d:bf:ff"]
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -451,67 +451,67 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
 
-  env-save:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Configure server
-          command: |
-            echo ENVIROMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            mkdir temp
-            cat "backend/.env"
-            cat "backend/.env" > temp/.env
-      - persist_to_workspace:
-          root: .
-          paths: 
-            - .
-  env-read:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Read .env
-          command: |
-            cat temp/.env
+  # env-save:
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           echo ENVIROMENT=production > "backend/.env"
+  #           echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+  #           mkdir temp
+  #           cat "backend/.env"
+  #           cat "backend/.env" > temp/.env
+  #     - persist_to_workspace:
+  #         root: .
+  #         paths: 
+  #           - .
+  # env-read:
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Read .env
+  #         command: |
+  #           cat temp/.env
 workflows:
   default:
     jobs:
-      - env-save
-      - env-read:
-          requires: [env-save]
+      # - env-save
+      # - env-read:
+      #     requires: [env-save]
       
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #    requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]          
-      # - smoke-test:
-      #    requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #    requires: [smoke-test]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+         requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]          
+      - smoke-test:
+         requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+         requires: [smoke-test]
