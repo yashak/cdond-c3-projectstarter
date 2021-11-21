@@ -371,7 +371,6 @@ jobs:
             cd backend
             cat .env            
             echo "Contents  of the inventory.txt file:"
-            cd .circleci/ansible
             cat ~/.circleci/ansible/inventory.txt
             echo "----------------------"
             ansible-playbook -i ~/.circleci/ansible/inventory.txt deploy-backend.yml
