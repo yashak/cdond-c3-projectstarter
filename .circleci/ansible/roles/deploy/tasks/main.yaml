@@ -1,11 +1,11 @@
 ---
-- name: Move files to server
-  become: true
+- name: "Copy backend build to server"
+  become: yes
   unarchive:
-    src: /root/project/backend.tar.gz
+    src:  ~/project/backend.tar.gz
     dest: /home/ubuntu/
     owner: ubuntu
-    
+
 - name: Install
   become: true
   shell: 
