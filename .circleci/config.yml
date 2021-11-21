@@ -186,7 +186,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       - notify_slack_error
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -221,16 +221,15 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat "backend/.env"
-            cat "backend/.env" > proje
             cd .circleci/ansible
-            cat ~/project/.circleci/ansible/inventory.txt
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
+            cat ~/.circleci/ansible/inventory.txt
+            ansible-playbook -i ~/.circleci/ansible/inventory.txt configure-server.yml
           environment:
             ANSIBLE_HOST_KEY_CHECKING: "false"
       - persist_to_workspace:
           root: .
           paths: 
-            - project/backend/
+            - /backend/
       - run:
           name: Install AWS CLI for rollback
           when: on_fail
@@ -355,11 +354,11 @@ jobs:
             tar -C backend -czvf backend.tar.gz .
             cd .circleci/ansible
             echo "Contents of the .env file:"
-            cat "~/project/backend/.env"
+            cat "~/backend/.env"
             echo "Contents  of the inventory.txt file:"
-            cat ~/project/.circleci/ansible/inventory.txt
+            cat ~/.circleci/ansible/inventory.txt
             echo "----------------------"
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
+            ansible-playbook -i ~/.circleci/ansible/inventory.txt deploy-backend.yml
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations:
