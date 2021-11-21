@@ -220,8 +220,8 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat "backend/.env"
             cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            cat ~/project/.circleci/ansible/inventory.txt
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
           environment:
             ANSIBLE_HOST_KEY_CHECKING: "false"
       - run:
@@ -431,29 +431,30 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      # - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend ] #, scan-frontend, scan-backend]
+         # requires: [test-frontend, test-backend #, scan-frontend, scan-backend]
           filters:
             branches:
               only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      #- run-migrations:
+      #    requires: [configure-infrastructure]
       #- deploy-frontend:
       #    requires: [run-migrations]
       - deploy-backend:
-          requires: [run-migrations]
+          #requires: [run-migrations]
+          requires: [configure-infrastructure]
       #- smoke-test:
       #    requires: [deploy-backend, deploy-frontend]
       #- cloudfront-update:
