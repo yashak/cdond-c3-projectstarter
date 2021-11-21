@@ -460,17 +460,16 @@ jobs:
           at: ~/
       - run:
           name: Configure server
-          no_output_timeout: 30m
           command: |
             echo ENVIROMENT=production > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            cat backend/.env
+            mkdir temp
+            cat "backend/.env"
+            cat "backend/.env" > temp/.env
       - persist_to_workspace:
           root: ~/
           paths: 
-            - backend/.env
-
+            - temp/
   env-read:
     docker:
       - image: python:3.7-alpine3.11
@@ -481,7 +480,7 @@ jobs:
       - run:
           name: Read .env
           command: |
-            cat backend/.env
+            cat temp/.env
 workflows:
   default:
     jobs:
