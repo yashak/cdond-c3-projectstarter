@@ -9,7 +9,7 @@
   unarchive:
     src:  ~/project/backend.tar.gz
     dest: /home/ubuntu/backend
-    creates: /home/ubuntu/backend/src/main.ts
+    creates: /home/ubuntu/backend/dist/main.js
     owner: ubuntu
 
 - name: Install
@@ -20,4 +20,4 @@
     npm run build
 
 - name: start server
-  command: pm2 start /home/ubuntu/server/dist/main.js
+  command: pm2 start /home/ubuntu/backend/dist/main.js
