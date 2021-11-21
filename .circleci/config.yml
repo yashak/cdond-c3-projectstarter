@@ -250,7 +250,8 @@ jobs:
       - run:
           name: Get .env file
           command: |
-            cat /project/backend/.env
+            dir
+            cat ~/project/backend/.env
       - run:
           name: npm install
           command: |
