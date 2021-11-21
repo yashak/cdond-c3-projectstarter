@@ -487,7 +487,8 @@ workflows:
   default:
     jobs:
       - env-save
-      - env-read
+      - env-read:
+          requires: env-save
       
       # - build-frontend
       # - build-backend
