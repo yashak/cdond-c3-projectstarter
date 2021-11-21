@@ -16,7 +16,7 @@
   become: true
   copy:
     src: ~/project/backend/.env
-    dest: ~/backend/.env
+    dest: /home/ubuntu/backend/.env
 
 - name: Install
   become: true
