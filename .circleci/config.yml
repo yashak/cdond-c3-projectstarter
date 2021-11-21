@@ -367,10 +367,11 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf backend.tar.gz .
-            cd .circleci/ansible
             echo "Contents of the .env file:"
-            cat ~/backend/.env
+            cd backend
+            cat .env            
             echo "Contents  of the inventory.txt file:"
+            cd .circleci/ansible
             cat ~/.circleci/ansible/inventory.txt
             echo "----------------------"
             ansible-playbook -i ~/.circleci/ansible/inventory.txt deploy-backend.yml
