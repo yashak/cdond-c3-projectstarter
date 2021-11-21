@@ -488,7 +488,7 @@ workflows:
     jobs:
       - env-save
       - env-read:
-          requires: env-save
+          requires: [env-save]
       
       # - build-frontend
       # - build-backend
