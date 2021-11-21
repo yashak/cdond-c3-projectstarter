@@ -15,7 +15,7 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_name:
-        type: string 
+        type: string
     steps:
       - run:
           name: Destroy backend environment
@@ -34,13 +34,13 @@ commands:
           when: on_fail
           command: |
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force  
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       workflow_name:
-        type: string      
+        type: string
     steps:
       - run:
           name: Revert migrations
@@ -54,7 +54,7 @@ commands:
               cd ~/project/backend
               npm install
               npm run migration:revert
-            fi  
+            fi
 
 jobs:
   build-frontend:
@@ -90,7 +90,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-  
+
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -166,7 +166,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -174,19 +174,19 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} --query Reservations[*].Instances[*].[PublicIpAddress] --output text >> .circleci/ansible/inventory.txt
-          
+
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
       - notify_slack_error
-      # rollback on failure  
-      - destroy-environment: 
+      # rollback on failure
+      - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   configure-infrastructure:
@@ -220,7 +220,7 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat "backend/.env"
             cd .circleci/ansible
-            cat inventory.txt           
+            cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
           environment:
             ANSIBLE_HOST_KEY_CHECKING: "false"
@@ -228,7 +228,7 @@ jobs:
           name: Install AWS CLI for rollback
           when: on_fail
           command: |
-            pip3 install --upgrade pip 
+            pip3 install --upgrade pip
             pip3 install awscli
       - destroy-environment :
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -253,7 +253,7 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat "backend/.env"
-      - run: 
+      - run:
           name: npm install
           command: |
             cd backend
@@ -276,7 +276,7 @@ jobs:
                 --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - destroy-environment:
-          workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"    
+          workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   deploy-frontend:
     docker:
@@ -288,12 +288,12 @@ jobs:
           command: |
             apk add --update ansible nodejs npm tar gzip
             apk add openssh-client
-            apk add --update curl      
-            pip3 install --upgrade pip 
+            apk add --update curl
+            pip3 install --upgrade pip
             pip3 install awscli
       - attach_workspace:
           at: ~/
-      - run: 
+      - run:
           name: Set .env
           command: |
             echo ENVIROMENT=production > "backend/.env"
@@ -315,7 +315,7 @@ jobs:
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
-            
+
       - run:
           name: Deploy frontend objects
           command: |
@@ -328,7 +328,7 @@ jobs:
       #     workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
-  
+
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
@@ -344,7 +344,7 @@ jobs:
             apk add --update ansible tar gzip ansible nodejs npm
             apk add openssh-client
             apk add --update curl
-            pip3 install --upgrade pip 
+            pip3 install --upgrade pip
             pip3 install awscli
       - run:
           name: Deploy backend
@@ -373,7 +373,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update nodejs npm curl
-            pip3 install --upgrade pip 
+            pip3 install --upgrade pip
             pip3 install awscli
       - run:
           name: Backend smoke test.
@@ -381,8 +381,8 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} --query Reservations[*].Instances[*].[PublicIpAddress] --output text)
               # Fetch and prepare the BACKEND_IP env var
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"            
- 
+            echo "${API_URL}"
+
             if curl "${API_URL}/api/status" | grep "ok"
             then
                 return 0
@@ -392,8 +392,8 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
-            echo ${URL} 
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
+            echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
               return 0
@@ -430,10 +430,10 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      #- build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
+      #- test-frontend:
+      #    requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
       # - scan-backend:
@@ -447,13 +447,13 @@ workflows:
               only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
+      #- run-migrations:
+      #    requires: [configure-infrastructure]
+      #- deploy-frontend:
+      #    requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      #- smoke-test:
+      #    requires: [deploy-backend, deploy-frontend]
+      #- cloudfront-update:
+      #    requires: [smoke-test]
