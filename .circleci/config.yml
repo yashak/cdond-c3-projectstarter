@@ -369,7 +369,7 @@ jobs:
             tar -C backend -czvf backend.tar.gz .
             cd .circleci/ansible
             echo "Contents of the .env file:"
-            cat "backend/.env"
+            cat ~/backend/.env
             echo "Contents  of the inventory.txt file:"
             cat ~/.circleci/ansible/inventory.txt
             echo "----------------------"
