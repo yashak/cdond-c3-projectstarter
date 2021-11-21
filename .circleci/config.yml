@@ -482,7 +482,7 @@ jobs:
       - run:
           name: Read .env
           command: |
-            cat ~/backend/.env
+            cat project/backend/.env
 workflows:
   default:
     jobs:
