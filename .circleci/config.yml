@@ -229,7 +229,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths: 
-            - /backend/
+            - /backend/.env
+            - /.circleci/ansible/inventory.txt
       - run:
           name: Install AWS CLI for rollback
           when: on_fail
