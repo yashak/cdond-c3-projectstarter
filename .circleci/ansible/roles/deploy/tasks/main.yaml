@@ -1,9 +1,15 @@
 ---
+- name: Create directory
+  file:
+    path: ~/backend
+    state: directory
+
 - name: "Copy backend build to server"
   become: yes
   unarchive:
     src:  ~/project/backend.tar.gz
-    dest: /home/ubuntu/
+    dest: /home/ubuntu/backend
+    creates: /home/ubuntu/backend/src/main.ts
     owner: ubuntu
 
 - name: Install
@@ -12,6 +18,6 @@
     cd /home/ubuntu/backend
     npm install
     npm run build
-    pm2 stop default
-    pm2 start npm -- start
-    pm2 save 
+
+- name: start server
+  command: pm2 start /home/ubuntu/server/dist/main.js
