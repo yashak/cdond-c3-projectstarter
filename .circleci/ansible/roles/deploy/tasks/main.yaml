@@ -16,7 +16,7 @@
   become: true
   shell: 
     cd /home/ubuntu/backend
-    npm install --production
+    npm install
     npm run build
 
 - name: "Start backend with pm2"
@@ -28,7 +28,10 @@
     export TYPEORM_USERNAME="{{ lookup('env', 'TYPEORM_USERNAME') }}"
     export TYPEORM_PASSWORD="{{ lookup('env', 'TYPEORM_PASSWORD') }}"
     export TYPEORM_DATABASE="{{ lookup('env', 'TYPEORM_DATABASE') }}"
-    pm2 start /home/ubuntu/backend/dist/main.js
+    #pm2 start /home/ubuntu/backend/dist/main.js
+    #pm2 start npm --name backend -- start
+    pm2 stop default
+    pm2 start npm -- start
 
 - name: "Set pm2 start as service"
   become: yes
