@@ -467,16 +467,16 @@ jobs:
             cat "backend/.env"
             cat "backend/.env" > temp/.env
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths: 
-            - temp/
+            - .
   env-read:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Read .env
           command: |
