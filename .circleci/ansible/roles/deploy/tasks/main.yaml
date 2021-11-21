@@ -30,6 +30,7 @@
     export TYPEORM_DATABASE="{{ lookup('env', 'TYPEORM_DATABASE') }}"
     #pm2 start /home/ubuntu/backend/dist/main.js
     #pm2 start npm --name backend -- start
+    cd /home/ubuntu/backend
     pm2 stop default
     pm2 start npm -- start
 
