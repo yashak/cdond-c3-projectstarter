@@ -184,9 +184,9 @@ jobs:
             echo $BACKEND_IP
             echo $BACKEND_IP >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: .
+          root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
       - notify_slack_error
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -199,7 +199,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["be:b5:94:98:f3:f9:1d:d9:9c:e7:1d:54:71:7d:bf:ff"]
       - attach_workspace:
-          at: ~/ 
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -222,15 +222,15 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat "backend/.env"
             cd .circleci/ansible
-            cat ~/.circleci/ansible/inventory.txt
-            ansible-playbook -i ~/.circleci/ansible/inventory.txt configure-server.yml
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
           environment:
             ANSIBLE_HOST_KEY_CHECKING: "false"
       - persist_to_workspace:
-          root: .
+          root: ~/
           paths: 
-            - /backend/.env
-            - /.circleci/ansible/inventory.txt
+            - project/backend/.env
+            - project/.circleci/ansible/inventory.txt
       - run:
           name: Install AWS CLI for rollback
           when: on_fail
@@ -246,7 +246,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Get .env file
           command: |
@@ -290,7 +290,7 @@ jobs:
             pip3 install --upgrade pip
             pip3 install awscli
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Set .env
           command: |
@@ -335,7 +335,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["be:b5:94:98:f3:f9:1d:d9:9c:e7:1d:54:71:7d:bf:ff"]
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: Install dependencies
           command: |
