@@ -29,7 +29,12 @@ commands:
           command: |
             echo "Destroying frontend environment: <<parameters.workflow_name>> "
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_name>>
-        
+      - run:
+          name: Delete new S3 bucket
+          command: |
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force  
+
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
