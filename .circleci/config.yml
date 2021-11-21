@@ -228,8 +228,7 @@ jobs:
             ANSIBLE_HOST_KEY_CHECKING: "false"
       - persist_to_workspace:
           root: ~/
-          paths: 
-            - project/backend/.env
+          paths:
             - project/.circleci/ansible/inventory.txt
       - run:
           name: Install AWS CLI for rollback
@@ -371,9 +370,10 @@ jobs:
             cd backend
             cat .env            
             echo "Contents  of the inventory.txt file:"
-            cat ~/.circleci/ansible/inventory.txt
+            cd .circleci/ansible
+            cat inventory.txt
             echo "----------------------"
-            ansible-playbook -i ~/.circleci/ansible/inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations:
