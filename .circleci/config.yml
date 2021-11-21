@@ -465,7 +465,7 @@ jobs:
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             cat "backend/.env"
-            cat "backend/.env" > project/backend/.env
+            cat "backend/.env" > backend/.env
       - persist_to_workspace:
           root: ~/
           paths: 
