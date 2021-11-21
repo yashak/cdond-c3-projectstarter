@@ -21,20 +21,21 @@ commands:
           name: Destroy backend environment
           when: on_fail
           command: |
-            echo "Destroying backend environment: <<parameters.workflow_name>> "
-            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_name>>
-      - run:
-          name: Destroy frontend environment
-          when: on_fail
-          command: |
-            echo "Destroying frontend environment: <<parameters.workflow_name>> "
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_name>>
-      - run:
-          name: Delete new S3 bucket
-          when: on_fail
-          command: |
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
+            echo "TODO: uncomment destroy environment"
+      #      echo "Destroying backend environment: <<parameters.workflow_name>> "
+      #       aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_name>>
+      # - run:
+      #     name: Destroy frontend environment
+      #     when: on_fail
+      #     command: |
+      #       echo "Destroying frontend environment: <<parameters.workflow_name>> "
+      #       aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_name>>
+      # - run:
+      #     name: Delete new S3 bucket
+      #     when: on_fail
+      #     command: |
+      #       aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      #       aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -46,15 +47,16 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            # Your Memstash GET URL code goes here
-            # See an example below
-            SUCCESS=$(curl -H "token: fd18783b-ffc4-482c-814c-891938f888d2" --request GET https://api.memstash.io/values/migration_<<parameters.workflow_name>>)
-            if (( $SUCCESS == 1 ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:revert
-            fi
+            echo "TODO: uncomment revert-migration code"
+            # # Your Memstash GET URL code goes here
+            # # See an example below
+            # SUCCESS=$(curl -H "token: fd18783b-ffc4-482c-814c-891938f888d2" --request GET https://api.memstash.io/values/migration_<<parameters.workflow_name>>)
+            # if (( $SUCCESS == 1 ));
+            # then
+            #   cd ~/project/backend
+            #   npm install
+            #   npm run migration:revert
+            # fi
 
 jobs:
   build-frontend:
@@ -324,8 +326,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      # - destroy-environment:
-      #     workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment:
+          workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
       - revert-migrations:
           workflow_name: "${CIRCLE_WORKFLOW_ID:0:7}"
 
