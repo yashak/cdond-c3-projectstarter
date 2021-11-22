@@ -34,3 +34,8 @@
     cd /home/ubuntu/backend
     pm2 stop default
     pm2 start npm -- start
+
+- name: "Set pm2 start as service"
+  become: yes
+  shell: |
+    env PATH=$PATH:/usr/local/bin pm2 startup -u ubuntu
