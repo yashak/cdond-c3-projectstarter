@@ -57,6 +57,22 @@ commands:
             #   npm install
             #   npm run migration:revert
             # fi
+  get-backend-env:
+    description: getting env variables to backend/.env
+    steps:
+      - run:
+          command: |
+            echo ENVIROMENT=production > "backend/.env"
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            cat "backend/.env"
 
 jobs:
   build-frontend:
@@ -206,21 +222,11 @@ jobs:
             apk add --update ansible nodejs npm
             apk add openssh-client
             apk add --update curl
+      - get-backend-env
       - run:
           name: Configure server
           no_output_timeout: 30m
           command: |
-            echo ENVIROMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/*/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            cat "backend/.env"
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
@@ -246,6 +252,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/
+      - get-backend-env
       - run:
           name: Get .env file
           command: |
@@ -291,20 +298,7 @@ jobs:
             pip3 install awscli
       - attach_workspace:
           at: ~/
-      - run:
-          name: Set .env
-          command: |
-            echo ENVIROMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            cat "backend/.env"
+      - get-backend-env
       - run:
           name: Get backend url
           command: |
@@ -344,19 +338,7 @@ jobs:
             apk add --update curl
             pip3 install --upgrade pip
             pip3 install awscli
-      - run:
-          name: Get .env
-          command: |
-            echo ENVIROMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/*/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+      - get-backend-env
       - run:
           name: Deploy backend
           command: |
