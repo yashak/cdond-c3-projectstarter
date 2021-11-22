@@ -377,10 +377,9 @@ jobs:
           name: Backend smoke test.
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} --query Reservations[*].Instances[*].[PublicIpAddress] --output text)
-              # Fetch and prepare the BACKEND_IP env var
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-
+            echo "API_URL = ${API_URL}"
+            
             if curl "${API_URL}/api/status" | grep "ok"
             then
                 return 0
@@ -448,43 +447,9 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
 
-  # env-save:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           echo ENVIROMENT=production > "backend/.env"
-  #           echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-  #           mkdir temp
-  #           cat "backend/.env"
-  #           cat "backend/.env" > temp/.env
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths: 
-  #           - .
-  # env-read:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Read .env
-  #         command: |
-  #           cat temp/.env
 workflows:
   default:
-    jobs:
-      # - env-save
-      # - env-read:
-      #     requires: [env-save]
-      
+    jobs:      
       - build-frontend
       - build-backend
       - test-frontend:
@@ -505,10 +470,12 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
-         requires: [run-migrations]
+          requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]          
       - smoke-test:
-         requires: [deploy-backend, deploy-frontend]
+          requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
-         requires: [smoke-test]
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
