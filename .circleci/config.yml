@@ -61,6 +61,7 @@ commands:
     description: getting env variables to backend/.env
     steps:
       - run:
+          name: getting env variables to backend/.env
           command: |
             echo ENVIROMENT=production > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
@@ -352,7 +353,7 @@ jobs:
             cd backend
             cat .env            
             echo "Contents  of the inventory.txt file:"
-            cd .circleci/ansible
+            cd ../.circleci/ansible
             cat inventory.txt
             echo "----------------------"
             ansible-playbook -i inventory.txt deploy-backend.yml
