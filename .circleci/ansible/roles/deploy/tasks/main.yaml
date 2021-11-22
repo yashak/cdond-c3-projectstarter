@@ -26,16 +26,13 @@
     npm run build
 
 - name: "Start backend with pm2"
+  become: true
   shell: |
     echo "Contents of the .env file (ansible task):"
     cat "~/project/backend/.env"
-    #pm2 start /home/ubuntu/backend/dist/main.js
-    #pm2 start npm --name backend -- start
     cd /home/ubuntu/backend
     pm2 stop default
     pm2 start npm -- start
-
-- name: "Set pm2 start as service"
-  become: yes
-  shell: |
-    env PATH=$PATH:/usr/local/bin pm2 startup -u ubuntu
+    #npm run start
+    cd dist 
+    pm2 start main.js --update-env
