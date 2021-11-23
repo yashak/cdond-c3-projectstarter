@@ -36,3 +36,5 @@
     #npm run start
     cd dist 
     pm2 start main.js --update-env
+    pm2 kill
+    pm2 start npm -- start
