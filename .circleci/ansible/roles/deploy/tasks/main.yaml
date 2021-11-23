@@ -31,10 +31,15 @@
     echo "Contents of the .env file (ansible task):"
     cat "~/project/backend/.env"
     cd /home/ubuntu/backend
-    pm2 stop default
-    pm2 start npm -- start
-    #npm run start
-    cd dist 
-    pm2 start main.js --update-env
+    # pm2 stop default
+    # pm2 start npm -- start
+    # npm run start
+    # cd dist 
+    # pm2 start main.js --update-env
     pm2 kill
     pm2 start npm -- start
+
+- name: Sleep for 300 seconds and continue with play
+  wait_for:
+    timeout: 300
+  delegate_to: localhost
