@@ -1,0 +1,4 @@
+URL01 = https://github.com/yashak/cdond-c3-projectstarter/tree/master
+URL02 = http://udapeople-0d6e407.s3-website-us-east-1.amazonaws.com/#/employees
+URL03 = http://dh3tvo22k9ep1.cloudfront.net/#/employees
+URL04 = http://52.91.69.211:3030/api/status
